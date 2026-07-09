@@ -1,2 +1,2 @@
 # Automatic-CV-filtering-in-CL
-BTL-CSLT kỳ 3: Quét  
+BTL-LTHTT kỳ 3: Quét CV
