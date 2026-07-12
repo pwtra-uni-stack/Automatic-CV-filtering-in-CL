@@ -4,6 +4,7 @@
 
 #ifndef AUTOMATIC_CV_FILTERING_IN_CL_BASICSCAN_H
 #define AUTOMATIC_CV_FILTERING_IN_CL_BASICSCAN_H
+#include "ScanStrategy.h"
 
 class BasicScan : public ScanStrategy{
 public:
