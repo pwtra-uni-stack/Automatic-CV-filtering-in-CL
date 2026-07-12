@@ -1,8 +1,15 @@
 //
-// Created by ADMIN on 10/07/2026.
+// Created by admin on 10/07/2026.
 //
 
-#ifndef AUTOMATIC_CV_FILTERING_IN_CL_UTILS_H
-#define AUTOMATIC_CV_FILTERING_IN_CL_UTILS_H
+#ifndef LTHDT_UTILS_H
+#define LTHDT_UTILS_H
+#include <string>
+#include <vector>
 
-#endif //AUTOMATIC_CV_FILTERING_IN_CL_UTILS_H
+class Utils {
+public:
+    static std::string trim(std::string str);
+    static std::vector<std::string> split(std::string str, char text_chia);
+};
+#endif
