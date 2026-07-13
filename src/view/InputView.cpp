@@ -1,22 +1,30 @@
+// src/view/InputView.cpp
 #include "InputView.h"
 #include <iostream>
 #include <limits>
+#include <algorithm>
 
 std::string InputView::getStringInput(const std::string& prompt) {
     std::cout << prompt;
     std::string input;
-    std::getline(std::cin >> std::ws, input); // bỏ qua khoảng trắng đầu
+    std::getline(std::cin >> std::ws, input);
+    // Trim whitespace
+    input.erase(0, input.find_first_not_of(" \t\n\r"));
+    input.erase(input.find_last_not_of(" \t\n\r") + 1);
     return input;
 }
 
 int InputView::getIntInput(const std::string& prompt) {
-    std::cout << prompt;
     int value;
-    while (!(std::cin >> value)) {
-        std::cerr << "Invalid input! Please enter an integer.\n";
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    while (true) {
         std::cout << prompt;
+        if (std::cin >> value) {
+            break;
+        } else {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "\033[31m❌ Please enter a valid integer.\033[0m\n";
+        }
     }
     return value;
 }

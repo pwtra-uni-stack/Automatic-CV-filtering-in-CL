@@ -238,3 +238,39 @@ void CVController::handleSave() {
         OutputView::showError("File error: " + std::string(e.what()));
     }
 }
+
+// src/controller/CVController.cpp (phần run)
+void CVController::run() {
+    int choice;
+    do {
+        try {
+            choice = menu.showMainMenu();
+            switch (choice) {
+            case 1: handleLoad(); break;
+            case 2: handleViewAll(); break;
+            case 3: handleViewDetail(); break;
+            case 4: handleFilter(); break;
+            case 5: handleScan(); break;
+            case 6: handleDelete(); break;
+            case 7: handleSave(); break;
+            case 8: OutputView::showMessage("Goodbye!"); break;
+            case 9: handlePreview(); break; // Mới
+            default: OutputView::showError("Invalid choice!");
+            }
+        } catch (...) { /* ... */ }
+    } while (choice != 8);
+}
+
+void CVController::handlePreview() {
+    std::string filePath = InputView::getStringInput("Nhập đường dẫn file (VD: Data/cvs/sample.txt): ");
+    try {
+        std::string content = FileManager::extractTextFromFile(filePath);
+        if (content.empty()) {
+            OutputView::showError("Không thể đọc file hoặc định dạng không hỗ trợ.");
+            return;
+        }
+        OutputView::showRawContent(content, filePath);
+    } catch (const std::exception& e) {
+        OutputView::showError("Lỗi: " + std::string(e.what()));
+    }
+}

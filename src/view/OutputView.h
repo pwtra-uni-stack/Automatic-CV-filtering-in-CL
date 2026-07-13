@@ -1,14 +1,11 @@
-//
-// Created by ADMIN on 10/07/2026.
-//
+// src/view/OutputView.h
+#ifndef OUTPUTVIEW_H
+#define OUTPUTVIEW_H
 
-#ifndef AUTOMATIC_CV_FILTERING_IN_CL_OUTPUTVIEW_H
-#define AUTOMATIC_CV_FILTERING_IN_CL_OUTPUTVIEW_H
-#pragma once
 #include <string>
 #include <vector>
 
-class CV; // forward declaration để tránh include CV.h
+class CV;
 
 class OutputView {
 public:
@@ -17,5 +14,7 @@ public:
     static void showCVList(const std::vector<CV*>& cvs);
     static void showCVDetail(const CV* cv);
     static void showStatistics(int total, int junk, int mismatch, int qualified);
+    static void showRawContent(const std::string& content, const std::string& filename);
 };
-#endif //AUTOMATIC_CV_FILTERING_IN_CL_OUTPUTVIEW_H
+
+#endif // OUTPUTVIEW_H

@@ -15,13 +15,9 @@ private:
     ScanEngine scanEngine;
 
 public:
-    // Constructor (BẮT BUỘC)
     CVController();
-
-    // Vòng lặp chính
     void run();
 
-    // Các handler
     void handleLoad();
     void handleViewAll();
     void handleViewDetail();
@@ -29,6 +25,9 @@ public:
     void handleScan();
     void handleDelete();
     void handleSave();
+
+    // Mới
+    void handlePreview();
 };
 
 #endif // CVCONTROLLER_H
