@@ -7,12 +7,12 @@ bool AdvancedScan::hasRequiredSkill(const CV& cv)
 
 bool AdvancedScan::hasEnoughExperience(const CV& cv)
 {
-    return cv.experienceYears >= 1;
+    return cv.experience_years >= 1;
 }
 
 bool AdvancedScan::hasEnoughScore(const CV& cv)
 {
-    return cv.score >= 60;
+    return cv.skills.size() >= 60;
 }
 
 bool AdvancedScan::scan(const CV& cv)
