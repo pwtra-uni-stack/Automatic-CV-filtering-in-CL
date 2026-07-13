@@ -7,20 +7,18 @@ bool BasicScan::isValidEmail(const std::string& email)
 
 bool BasicScan::scan(const CV& cv)
 {
-    if (cv.candidate == nullptr)
+    if (cv.candidate.name.empty())
         return false;
 
-    if (cv.candidate->name.empty())
-        return false;
-
-    if (!isValidEmail(cv.candidate->email))
+    if (!isValidEmail(cv.candidate.email))
         return false;
 
     if (cv.skills.empty())
         return false;
 
-    if (cv.rawText.empty())
+    if (cv.raw_text.empty())
         return false;
 
     return true;
 }
+
