@@ -1,23 +1,31 @@
 #include "AdvancedScan.h"
 
-int AdvancedScan::calculateScore(const CV& cv)
+bool AdvancedScan::hasRequiredSkill(const CV& cv)
 {
-    int score = 0;
+    return !cv.skills.empty();
+}
 
-    score += static_cast<int>(cv.skills.size()) * 10;
-    score += cv.experience_years * 5;
+bool AdvancedScan::hasEnoughExperience(const CV& cv)
+{
+    return cv.experienceYears >= 1;
+}
 
-    if (cv.education == "Bachelor")
-        score += 20;
-    else if (cv.education == "Master")
-        score += 30;
-    else if (cv.education == "PhD")
-        score += 40;
-
-    return score;
+bool AdvancedScan::hasEnoughScore(const CV& cv)
+{
+    return cv.score >= 60;
 }
 
 bool AdvancedScan::scan(const CV& cv)
 {
-    return calculateScore(cv) >= 60;
+    if (!hasRequiredSkill(cv))
+        return false;
+
+    if (!hasEnoughExperience(cv))
+        return false;
+
+    if (!hasEnoughScore(cv))
+        return false;
+
+    return true;
 }
+
