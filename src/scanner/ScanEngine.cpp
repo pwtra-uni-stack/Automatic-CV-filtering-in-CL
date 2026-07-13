@@ -1,100 +1,52 @@
 #include "ScanEngine.h"
-#include "BasicScan.h"
-#include "AdvancedScan.h"
-
 #include <iostream>
 
 ScanEngine::ScanEngine()
 {
-    basic = new BasicScan();
-
-    advanced = new AdvancedScan();
 }
 
-ScanEngine::~ScanEngine()
+void ScanEngine::clear()
 {
-    delete basic;
-
-    delete advanced;
+    junkList.clear();
+    mismatchList.clear();
+    qualifiedList.clear();
 }
 
-void ScanEngine::scan(std::vector<CV>& list)
+void ScanEngine::scan(CVDatabase& database)
 {
-    junk.clear();
-    mismatch.clear();
-    qualified.clear();
+    clear();
 
-    for (size_t i = 0; i < list.size(); i++)
+    for (CV* cv : database.list_cv)
     {
-        CV cv = list[i];
+        if (cv == nullptr)
+            continue;
 
-        try
+        if (!basicScan.scan(*cv))
         {
-            if (!basic->scan(cv))
-            {
-                junk.push_back(cv);
-            }
-            else if (!advanced->scan(cv))
-            {
-                mismatch.push_back(cv);
-            }
-            else
-            {
-                qualified.push_back(cv);
-            }
+            junkList.push_back(cv);
         }
-        catch (...)
+        else if (!advancedScan.scan(*cv))
         {
-            std::cout << "Loi khi scan CV "
-                      << cv.cv_id
-                      << std::endl;
+            mismatchList.push_back(cv);
+        }
+        else
+        {
+            qualifiedList.push_back(cv);
         }
     }
 }
 
-void ScanEngine::showStatistic()
+const std::vector<CV*>& ScanEngine::getJunk() const
 {
-    std::cout << "\n===== THONG KE =====\n";
-
-    std::cout << "Qualified : "
-              << qualified.size()
-              << std::endl;
-
-    std::cout << "Mismatch : "
-              << mismatch.size()
-              << std::endl;
-
-    std::cout << "Junk : "
-              << junk.size()
-              << std::endl;
+    return junkList;
 }
 
-void ScanEngine::showQualified()
+const std::vector<CV*>& ScanEngine::getMismatch() const
 {
-    std::cout << "\n===== QUALIFIED =====\n";
-
-    for (size_t i = 0; i < qualified.size(); i++)
-    {
-        qualified[i].HienThi();
-    }
+    return mismatchList;
 }
 
-void ScanEngine::showMismatch()
+const std::vector<CV*>& ScanEngine::getQualified() const
 {
-    std::cout << "\n===== MISMATCH =====\n";
-
-    for (size_t i = 0; i < mismatch.size(); i++)
-    {
-        mismatch[i].HienThi();
-    }
-}
-
-void ScanEngine::showJunk()
-{
-    std::cout << "\n===== JUNK =====\n";
-
-    for (size_t i = 0; i < junk.size(); i++)
-    {
-        junk[i].HienThi();
-    }
+    return qualifiedList;
 }
