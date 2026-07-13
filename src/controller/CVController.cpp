@@ -274,3 +274,24 @@ void CVController::handlePreview() {
         OutputView::showError("Lỗi: " + std::string(e.what()));
     }
 }
+
+void CVController::handlePreview() {
+    std::string filePath = InputView::getStringInput("Enter file path (e.g., Data/cvs/sample.txt): ");
+    if (filePath.empty()) {
+        OutputView::showError("No file path provided.");
+        return;
+    }
+
+    try {
+        std::string content = FileManager::extractTextFromFile(filePath);
+        if (content.empty()) {
+            OutputView::showError("Unable to read file or unsupported format.");
+            return;
+        }
+        OutputView::showRawContent(content, filePath);
+    } catch (const FileException& e) {
+        OutputView::showError("File error: " + std::string(e.what()));
+    } catch (const std::exception& e) {
+        OutputView::showError("Error: " + std::string(e.what()));
+    }
+}

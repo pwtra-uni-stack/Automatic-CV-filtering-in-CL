@@ -17,7 +17,6 @@ private:
 public:
     CVController();
     void run();
-
     void handleLoad();
     void handleViewAll();
     void handleViewDetail();
@@ -25,8 +24,6 @@ public:
     void handleScan();
     void handleDelete();
     void handleSave();
-
-    // Mới
     void handlePreview();
 };
 
