@@ -1,41 +1,23 @@
-// src/controller/CVController.cpp
-#include "CVController.h"
 
+#include "CVController.h"
+#include "model/FileManager.h"
+#include "model/SkillFilter.h"
+#include "model/ExperienceFilter.h"
+#include "model/EducationFilter.h"
+#include "scanner/BasicScan.h"
+#include "scanner/AdvancedScan.h"
+#include "exception/Exception.h"
+#include "utils/Logger.h"
 #include <iostream>
 #include <vector>
 #include <memory>
 #include <string>
-#include <filesystem>
-
-// Model
-#include "model/CV.h"
-#include "model/CVDatabase.h"
-#include "model/CVFilter.h"
-#include "model/SkillFilter.h"
-#include "model/ExperienceFilter.h"
-#include "model/EducationFilter.h"
-#include "model/FileManager.h"
-
-// Scanner
-#include "scanner/ScanEngine.h"
-#include "scanner/BasicScan.h"
-#include "scanner/AdvancedScan.h"
-
-// Exception
-#include "exception/Exception.h"
-
-// Utils
-#include "utils/Utils.h"
-
-// View (đã được include qua header)
-
-// -------------------- CONSTRUCTOR --------------------
 CVController::CVController() {
-    // Khởi tạo dữ liệu mặc định (có thể load từ file nếu muốn)
-    std::cout << "CVController initialized.\n";
+    LOG_INFO("CVController initialized");
+    // Khởi tạo dữ liệu mẫu (sau này có thể load từ file)
+    // Tạm thời để database rỗng, người dùng sẽ load từ menu
 }
 
-// -------------------- VÒNG LẶP CHÍNH --------------------
 void CVController::run() {
     int choice;
     do {
@@ -50,51 +32,52 @@ void CVController::run() {
                 case 6: handleDelete(); break;
                 case 7: handleSave(); break;
                 case 8:
-                    OutputView::showMessage("Goodbye! Thanks for using CV_Auto.");
+                    OutputView::showMessage("Goodbye!");
                     break;
                 default:
-                    OutputView::showError("Invalid choice. Please try again.");
+                    OutputView::showError("Invalid choice!");
             }
+        } catch (const InvalidInputException& e) {
+            OutputView::showError("Input error: " + std::string(e.what()));
+        } catch (const FileException& e) {
+            OutputView::showError("File error: " + std::string(e.what()));
         } catch (const std::exception& e) {
-            OutputView::showError(std::string("System error: ") + e.what());
+            OutputView::showError("System error: " + std::string(e.what()));
         }
     } while (choice != 8);
 }
 
 // -------------------- HANDLER LOAD --------------------
 void CVController::handleLoad() {
-    OutputView::showMessage("Loading CVs from default directory: data/cvs/");
+    OutputView::showMessage("Loading CVs from Data/cvs/");
 
-    // 1. Lấy danh sách file trong thư mục
-    std::string dir = "data/cvs/";
-    std::vector<std::string> files = FileManager::getCVFiles(dir);
+    try {
+        // Lấy danh sách file trong thư mục
+        auto files = FileManager::getCVFiles("Data/cvs/");
+        if (files.empty()) {
+            OutputView::showError("No files found in Data/cvs/");
+            return;
+        }
 
-    if (files.empty()) {
-        OutputView::showError("No files found in " + dir);
-        return;
-    }
-
-    // 2. Duyệt từng file và load
-    int loadedCount = 0;
-    for (const auto& file : files) {
-        try {
-            // Thử load CV từ file
+        int loaded = 0;
+        for (const auto& file : files) {
             CV* cv = FileManager::loadCVFromFile(file);
             if (cv) {
                 database.addCV(cv);
-                loadedCount++;
-                // OutputView::showMessage("Loaded: " + file);
+                loaded++;
+                LOG_INFO("Loaded: " + file);
             } else {
-                OutputView::showError("Failed to parse CV from: " + file);
+                LOG_WARN("Failed to parse: " + file);
             }
-        } catch (const FileException& e) {
-            OutputView::showError(std::string("File error: ") + e.what());
-        } catch (const std::exception& e) {
-            OutputView::showError(std::string("Unexpected error while loading ") + file + ": " + e.what());
         }
-    }
 
-    OutputView::showMessage("Successfully loaded " + std::to_string(loadedCount) + " CV(s).");
+        OutputView::showMessage("Loaded " + std::to_string(loaded) + " CVs successfully!");
+        LOG_INFO("Loaded " + std::to_string(loaded) + " CVs");
+    } catch (const FileException& e) {
+        OutputView::showError("File error: " + std::string(e.what()));
+    } catch (const std::exception& e) {
+        OutputView::showError("Error: " + std::string(e.what()));
+    }
 }
 
 // -------------------- HANDLER VIEW ALL --------------------
@@ -109,7 +92,8 @@ void CVController::handleViewAll() {
 
 // -------------------- HANDLER VIEW DETAIL --------------------
 void CVController::handleViewDetail() {
-    if (database.getAll().empty()) {
+    auto all = database.getAll();
+    if (all.empty()) {
         OutputView::showError("No CVs available. Load data first.");
         return;
     }
@@ -125,19 +109,17 @@ void CVController::handleViewDetail() {
 
 // -------------------- HANDLER FILTER --------------------
 void CVController::handleFilter() {
-    if (database.getAll().empty()) {
+    auto all = database.getAll();
+    if (all.empty()) {
         OutputView::showError("No CVs to filter. Load data first.");
         return;
     }
 
-    // 1. Nhập tiêu chí lọc
     std::string keyword = InputView::getStringInput("Enter skill keyword (or leave empty): ");
     int minExp = InputView::getIntInput("Enter minimum years of experience: ");
     std::string edu = InputView::getStringInput("Enter required education (BSc/MSc/PhD or leave empty): ");
 
-    // 2. Tạo danh sách filter
     std::vector<CVFilter*> filters;
-
     if (!keyword.empty()) {
         filters.push_back(new SkillFilter(keyword));
     }
@@ -154,14 +136,10 @@ void CVController::handleFilter() {
         return;
     }
 
-    // 3. Áp dụng filter
     auto result = database.filter(filters);
-
-    // 4. Hiển thị kết quả
     OutputView::showCVList(result);
     OutputView::showMessage("Found " + std::to_string(result.size()) + " CV(s) matching criteria.");
 
-    // 5. Dọn dẹp bộ nhớ filter
     for (auto* f : filters) {
         delete f;
     }
@@ -176,73 +154,61 @@ void CVController::handleScan() {
     }
 
     OutputView::showMessage("Scanning and classifying CVs...");
+    LOG_INFO("Starting scan of " + std::to_string(all.size()) + " CVs");
 
-    // 1. Tạo các strategy
-    BasicScan basicScan;
-    AdvancedScan advancedScan;
+    BasicScan basic;
+    AdvancedScan advanced;
+    scanEngine.addStrategy(&basic);
+    scanEngine.addStrategy(&advanced);
 
-    // 2. Thêm vào ScanEngine
-    scanEngine.addStrategy(&basicScan);
-    scanEngine.addStrategy(&advancedScan);
-
-    // 3. Thực hiện quét
     ScanResult result = scanEngine.scanAll(all);
 
-    // 4. Lưu các CV đã phân loại vào thư mục tương ứng (nếu có thể)
-    //    Để đơn giản, ta chỉ hiển thị thống kê
     OutputView::showStatistics(
-        static_cast<int>(all.size()),
-        static_cast<int>(result.junk.size()),
-        static_cast<int>(result.mismatch.size()),
-        static_cast<int>(result.qualified.size())
+        all.size(),
+        result.junk.size(),
+        result.mismatch.size(),
+        result.qualified.size()
     );
 
-    // (Có thể gọi FileManager::copyFile để sao chép file gốc vào thư mục tương ứng)
-    // Nhưng hiện tại chưa biết đường dẫn file gốc, nên tạm bỏ qua
+    LOG_INFO("Scan complete: " +
+             std::to_string(result.junk.size()) + " junk, " +
+             std::to_string(result.mismatch.size()) + " mismatch, " +
+             std::to_string(result.qualified.size()) + " qualified");
 }
 
 // -------------------- HANDLER DELETE --------------------
 void CVController::handleDelete() {
-    if (database.getAll().empty()) {
+    auto all = database.getAll();
+    if (all.empty()) {
         OutputView::showError("No CVs to delete.");
         return;
     }
 
-    // Hỏi loại xóa
-    std::cout << "Delete options:\n";
-    std::cout << "1. Delete by ID\n";
-    std::cout << "2. Delete all junk CVs\n";
-    std::cout << "3. Delete all mismatch CVs\n";
-    std::cout << "Your choice: ";
-    int choice;
-    std::cin >> choice;
+    OutputView::showMessage("Delete options:");
+    OutputView::showMessage("1. Delete by ID");
+    OutputView::showMessage("2. Delete all junk CVs (run scan first)");
+    OutputView::showMessage("3. Delete all mismatch CVs (run scan first)");
+
+    int choice = InputView::getIntInput("Your choice: ");
 
     switch (choice) {
         case 1: {
             int id = InputView::getIntInput("Enter CV ID to delete: ");
-            CV* cv = database.getById(id);
-            if (!cv) {
-                OutputView::showError("CV not found.");
-                return;
-            }
-            bool confirm = InputView::getConfirmation("Are you sure you want to delete CV #" + std::to_string(id) + "?");
-            if (confirm) {
-                database.removeCV(id);
-                OutputView::showMessage("CV #" + std::to_string(id) + " deleted.");
+            if (database.getById(id)) {
+                if (InputView::getConfirmation("Are you sure?")) {
+                    database.removeCV(id);
+                    OutputView::showMessage("CV #" + std::to_string(id) + " deleted.");
+                    LOG_INFO("Deleted CV #" + std::to_string(id));
+                }
             } else {
-                OutputView::showMessage("Delete cancelled.");
+                OutputView::showError("CV not found.");
             }
             break;
         }
-        case 2: {
-            // Xóa tất cả CV rác (cần quét trước)
+        case 2:
+        case 3:
             OutputView::showMessage("Please run Scan first to classify CVs.");
             break;
-        }
-        case 3: {
-            OutputView::showMessage("Please run Scan first to classify CVs.");
-            break;
-        }
         default:
             OutputView::showError("Invalid option.");
     }
@@ -256,19 +222,19 @@ void CVController::handleSave() {
         return;
     }
 
-    std::string path = InputView::getStringInput("Enter output file path (default: data/cv_data.txt): ");
+    std::string path = InputView::getStringInput("Enter output file path (default: Data/cv_data.txt): ");
     if (path.empty()) {
-        path = "data/cv_data.txt";
+        path = "Data/cv_data.txt";
     }
 
     try {
-        bool success = FileManager::saveAllCVs(path, all);
-        if (success) {
+        if (FileManager::saveAllCVs(path, all)) {
             OutputView::showMessage("Saved " + std::to_string(all.size()) + " CVs to " + path);
+            LOG_INFO("Saved " + std::to_string(all.size()) + " CVs to " + path);
         } else {
             OutputView::showError("Failed to save data.");
         }
     } catch (const FileException& e) {
-        OutputView::showError(std::string("File error: ") + e.what());
+        OutputView::showError("File error: " + std::string(e.what()));
     }
 }
