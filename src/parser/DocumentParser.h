@@ -8,7 +8,6 @@
 class DocumentParser {
 public:
     virtual ~DocumentParser() {}
-
     virtual std::string parse(std::string duong_dan_file) = 0;
 };
 #endif //AUTOMATIC_CV_FILTERING_IN_CL_DOCUMENTPARSER_H

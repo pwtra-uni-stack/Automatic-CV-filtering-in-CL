@@ -1,24 +1,24 @@
-//
-// Created by admin on 12/07/2026.
-//
 #include "PdfParser.h"
-#include "../exception/FileException.h"
 #include <fstream>
-#include <iostream>
+#include <sstream>
+#include <cstdlib>
 
 std::string PdfParser::parse(std::string duong_dan_file) {
-    std::ifstream file(duong_dan_file);
-    if (file.is_open() == false) {
-        throw FileException("Khong the mo file CV dạng PDF tai: " + duong_dan_file);
+    std::string file_tam = duong_dan_file + ".txt";
+
+    std::string lenh = "pdftotext \"" + duong_dan_file + "\" \"" + file_tam + "\"";
+    int trang_thai = std::system(lenh.c_str());
+
+    std::ifstream file(file_tam);
+    if (!file.is_open()) {
+        return "[Lỗi] Không thể trích xuất văn bản từ file PDF: " + duong_dan_file;
     }
 
-    std::string noi_dung_tong = "";
-    std::string dong_chu;
-
-    while (std::getline(file, dong_chu)) {
-        noi_dung_tong += dong_chu + "\n";
-    }
-
+    std::stringstream buffer;
+    buffer << file.rdbuf();
     file.close();
-    return noi_dung_tong;
+
+    std::remove(file_tam.c_str());
+
+    return buffer.str();
 }
