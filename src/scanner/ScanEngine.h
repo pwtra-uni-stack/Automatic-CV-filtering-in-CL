@@ -6,62 +6,29 @@
 #define AUTOMATIC_CV_FILTERING_IN_CL_SCANENGINE_H
 
 #include <vector>
-#include "../model/CV.h"
+#include "../model/CVDatabase.h"
 #include "BasicScan.h"
 #include "AdvancedScan.h"
 
-class ScanEngine{
-
+class ScanEngine {
 private:
+    BasicScan basicScan;
+    AdvancedScan advancedScan;
 
-    BasicScan basic;
-    AdvancedScan advanced;
+    std::vector<CV*> junkList;
+    std::vector<CV*> mismatchList;
+    std::vector<CV*> qualifiedList;
 
 public:
+    ScanEngine();
 
-    std::vector<CV> junk;
+    void scan(CVDatabase& database);
 
-    std::vector<CV> mismatch;
+    const std::vector<CV*>& getJunk() const;
+    const std::vector<CV*>& getMismatch() const;
+    const std::vector<CV*>& getQualified() const;
 
-    std::vector<CV> qualified;
-
-    void scan(std::vector<CV>& list){
-
-        junk.clear();
-        mismatch.clear();
-        qualified.clear();
-
-        for(auto &cv:list){
-
-            if(!basic.scan(cv)){
-
-                junk.push_back(cv);
-            }
-
-            else if(!advanced.scan(cv)){
-
-                mismatch.push_back(cv);
-            }
-
-            else{
-
-                qualified.push_back(cv);
-            }
-        }
-    }
-
-    void showStatistic(){
-
-        std::cout<<"===== THONG KE =====\n";
-
-        std::cout<<"Junk: "<<junk.size()<<std::endl;
-
-        std::cout<<"Mismatch: "<<mismatch.size()<<std::endl;
-
-        std::cout<<"Qualified: "<<qualified.size()<<std::endl;
-    }
-
+    void clear();
 };
-
 
 #endif //AUTOMATIC_CV_FILTERING_IN_CL_SCANENGINE_H
