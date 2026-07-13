@@ -1,52 +1,52 @@
 #include "ScanEngine.h"
-#include <iostream>
 
 ScanEngine::ScanEngine()
 {
 }
 
-void ScanEngine::clear()
+void ScanEngine::addStrategy(ScanStrategy* strategy)
 {
-    junkList.clear();
-    mismatchList.clear();
-    qualifiedList.clear();
+    strategies.push_back(strategy);
 }
 
-void ScanEngine::scan(CVDatabase& database)
+void ScanEngine::clearStrategies()
 {
-    clear();
+    strategies.clear();
+}
 
-    for (CV* cv : database.list_cv)
+ScanResult ScanEngine::scanAll(const std::vector<CV*>& cvs)
+{
+    ScanResult result;
+
+    for (CV* cv : cvs)
     {
         if (cv == nullptr)
             continue;
 
-        if (!basicScan.scan(*cv))
+        bool basicPass = true;
+        bool advancedPass = true;
+
+        if (strategies.size() >= 1)
+            basicPass = strategies[0]->scan(*cv);
+
+        if (!basicPass)
         {
-            junkList.push_back(cv);
+            result.junk.push_back(cv);
+            continue;
         }
-        else if (!advancedScan.scan(*cv))
+
+        if (strategies.size() >= 2)
+            advancedPass = strategies[1]->scan(*cv);
+
+        if (advancedPass)
         {
-            mismatchList.push_back(cv);
+            result.qualified.push_back(cv);
         }
         else
         {
-            qualifiedList.push_back(cv);
+            result.mismatch.push_back(cv);
         }
     }
-}
 
-const std::vector<CV*>& ScanEngine::getJunk() const
-{
-    return junkList;
-}
-
-const std::vector<CV*>& ScanEngine::getMismatch() const
-{
-    return mismatchList;
-}
-
-const std::vector<CV*>& ScanEngine::getQualified() const
-{
-    return qualifiedList;
+    return result;
 }
