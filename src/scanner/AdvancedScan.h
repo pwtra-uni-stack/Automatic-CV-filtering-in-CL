@@ -7,8 +7,7 @@
 
 #include "ScanStrategy.h"
 
-class AdvancedScan : public ScanStrategy
-{
+class AdvancedScan :public ScanStrategy{
 private:
     bool hasRequiredSkill(const CV& cv);
     bool hasEnoughExperience(const CV& cv);

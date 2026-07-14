@@ -15,7 +15,7 @@ size_t GeminiClient::WriteCallback(void* contents, size_t size, size_t nmemb, vo
 
 std::string GeminiClient::phânTíchCV(const std::string& rawText, const std::string& prompt) {
     if (apiKey.empty()) {
-        LOG_ERROR("Gemini API Key is empty!");[cite: 36]
+        LOG_ERROR("Gemini API Key is empty!");[cite: 36];
         return "{}";
     }
 
@@ -48,7 +48,7 @@ std::string GeminiClient::phânTíchCV(const std::string& rawText, const std::st
         // Thực hiện cuộc gọi mạng
         CURLcode res = curl_easy_perform(curl);
         if (res != CURLE_OK) {
-            LOG_ERROR("CURL Request failed: " + std::string(curl_easy_strerror(res)));[cite: 36]
+            LOG_ERROR("CURL Request failed: " + std::string(curl_easy_strerror(res)));[cite: 36];
         }
 
         curl_slist_free_all(headers);

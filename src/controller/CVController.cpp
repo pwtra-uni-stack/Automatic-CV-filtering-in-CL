@@ -269,7 +269,7 @@ void CVController::handlePreview() {
 
 void handleAICVProcessing(CV* cv) {
     // 1. Đọc API Key
-    std::string apiKey = EnvLoader::getEnv("GEMINI_API_KEY");[cite: 45]
+    std::string apiKey = EnvLoader::getEnv("GEMINI_API_KEY");[cite: 45];
     GeminiClient client(apiKey);
 
     // 2. Viết định hướng Prompt ép AI trả về đúng cấu trúc JSON mong muốn
@@ -294,11 +294,11 @@ void handleAICVProcessing(CV* cv) {
         auto aiData = nlohmann::json::parse(aiTextResponse);
 
         // 5. Cập nhật trực tiếp vào đối tượng CV của bạn[cite: 14]
-        cv->score = aiData["score"].get<int>();[cite: 14]
-        cv->skills = aiData["skills"].get<std::vector<std::string>>();[cite: 14]
+        cv->score = aiData["score"].get<int>();[cite: 14];
+        cv->skills = aiData["skills"].get<std::vector<std::string>>();[cite: 14];
 
-        LOG_INFO("CV #" + cv->id + " successfully processed by Gemini AI.");[cite: 1, 36]
+        LOG_INFO("CV #" + cv->id + " successfully processed by Gemini AI.");[cite: 1, 36];
     } catch (const std::exception& e) {
-        LOG_ERROR("Failed to parse Gemini AI response: " + std::string(e.what()));[cite: 36]
+        LOG_ERROR("Failed to parse Gemini AI response: " + std::string(e.what()));[cite: 36];
     }
 }
