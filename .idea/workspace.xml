@@ -28,16 +28,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="18841517-a661-41e1-9485-7c5d0e81fe9f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/ai/GeminiClient.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/ai/GeminiClient.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/utils/EnvLoader.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.env.example" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Automatic-CV-filtering-in-CL.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/controller/CVController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/CVController.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -140,7 +131,7 @@
       <workItem from="1783620350257" duration="1518000" />
       <workItem from="1783859441631" duration="11093000" />
       <workItem from="1783933961195" duration="2000" />
-      <workItem from="1783950974212" duration="21037000" />
+      <workItem from="1783950974212" duration="24092000" />
     </task>
     <servers />
   </component>
