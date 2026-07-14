@@ -3,6 +3,7 @@
 #include <sstream>
 #include <set>
 #include <filesystem>
+#include <fstream>
 
 namespace fs = std::filesystem;
 
@@ -29,7 +30,7 @@ std::string CodeParser::quétThưMụcCode(std::string duong_dan_thu_muc) {
         if (la_thu_muc_rac) continue;
 
         if (fs::is_regular_file(entry) && duoi_file_hop_le.count(path.extension().string())) {
-            std::ifstream file(path);
+            std::ifstream file(path.c_str());
             if (file.is_open()) {
                 std::string path_tuong_doi = fs::relative(path, duong_dan_thu_muc).string();
                 chuoi_code_tong_hop << "=== FILE: " << path_tuong_doi << " ===\n";
