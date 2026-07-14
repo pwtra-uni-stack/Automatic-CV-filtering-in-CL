@@ -8,7 +8,7 @@
 #include "view/OutputView.h"
 #include "scanner/ScanEngine.h"
 
-class CVController {
+class CVController:public CVView {
 private:
     CVDatabase database;
     MenuView menu;

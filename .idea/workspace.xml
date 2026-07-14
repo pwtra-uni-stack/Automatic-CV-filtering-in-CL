@@ -28,16 +28,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="18841517-a661-41e1-9485-7c5d0e81fe9f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/ai/GeminiClient.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/ai/GeminiClient.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/utils/EnvLoader.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.env.example" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Automatic-CV-filtering-in-CL.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ai/GeminiClient.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ai/GeminiClient.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller/CVController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/CVController.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controller/CVController.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/CVController.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/scanner/AdvancedScan.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/scanner/AdvancedScan.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/scanner/ScanStrategy.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/scanner/ScanStrategy.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,7 +43,6 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
@@ -117,11 +112,6 @@
     </key>
   </component>
   <component name="RunManager">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="CV_Auto" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="CV_Auto" TARGET_NAME="CV_Auto" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="CV_Auto" RUN_TARGET_NAME="CV_Auto">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -156,10 +146,6 @@
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/src/controller/CVController.cpp</url>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/model/ExperienceFilter.h</url>
           <line>2</line>
