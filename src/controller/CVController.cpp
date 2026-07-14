@@ -11,6 +11,10 @@
 #include <vector>
 #include <memory>
 #include <string>
+#include "ai/GeminiClient.h"
+#include "utils/EnvLoader.h"
+#include <nlohmann/json.hpp>
+
 
 CVController::CVController() {
     LOG_INFO("CVController initialized");
@@ -260,5 +264,41 @@ void CVController::handlePreview() {
         OutputView::showError("File error: " + std::string(e.what()));
     } catch (const std::exception& e) {
         OutputView::showError("Error: " + std::string(e.what()));
+    }
+}
+
+void handleAICVProcessing(CV* cv) {
+    // 1. Đọc API Key
+    std::string apiKey = EnvLoader::getEnv("GEMINI_API_KEY");[cite: 45]
+    GeminiClient client(apiKey);
+
+    // 2. Viết định hướng Prompt ép AI trả về đúng cấu trúc JSON mong muốn
+    std::string prompt = "Bạn là một chuyên gia tuyển dụng phần mềm. Hãy phân tích CV sau và trả về "
+                         "kết quả duy nhất dưới định dạng JSON có cấu trúc như sau, không kèm markdown:\n"
+                         "{\n"
+                         "  \"score\": <số nguyên từ 0-100>,\n"
+                         "  \"skills\": [\"kỹ năng 1\", \"kỹ năng 2\"]\n"
+                         "}";
+
+    // 3. Gọi API Gemini
+    std::string rawJsonResponse = client.phânTíchCV(cv->raw_text, prompt);
+
+    try {
+        // 4. Bóc tách JSON kết quả trả về bằng nlohmann/json
+        auto parsedJson = nlohmann::json::parse(rawJsonResponse);
+
+        // Lưu ý: Cấu trúc trả về của Gemini API nằm bọc trong candidates[0].content.parts[0].text
+        std::string aiTextResponse = parsedJson["candidates"][0]["content"]["parts"][0]["text"];
+
+        // Khử nhiễu nếu AI vô tình bọc thẻ ```json ... ```
+        auto aiData = nlohmann::json::parse(aiTextResponse);
+
+        // 5. Cập nhật trực tiếp vào đối tượng CV của bạn[cite: 14]
+        cv->score = aiData["score"].get<int>();[cite: 14]
+        cv->skills = aiData["skills"].get<std::vector<std::string>>();[cite: 14]
+
+        LOG_INFO("CV #" + cv->id + " successfully processed by Gemini AI.");[cite: 1, 36]
+    } catch (const std::exception& e) {
+        LOG_ERROR("Failed to parse Gemini AI response: " + std::string(e.what()));[cite: 36]
     }
 }

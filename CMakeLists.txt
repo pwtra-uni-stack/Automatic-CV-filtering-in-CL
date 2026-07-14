@@ -14,6 +14,9 @@ set(SOURCES
         src/main.cpp
         src/parser/PdfParser.cpp
         src/parser/CodeParser.cpp
+        src/utils/EnvLoader.h
+        src/ai/GeminiClient.h
+        src/ai/GeminiClient.cpp
         # Thêm các file .cpp khác nếu có, ví dụ:
         # src/ai/GeminiClient.cpp
 )
