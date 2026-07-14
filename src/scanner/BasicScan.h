@@ -1,12 +1,8 @@
-//
-// Created by ADMIN on 10/07/2026.
-//
-
 #ifndef AUTOMATIC_CV_FILTERING_IN_CL_BASICSCAN_H
 #define AUTOMATIC_CV_FILTERING_IN_CL_BASICSCAN_H
 
+#include <string>            
 #include "ScanStrategy.h"
-#include <string>
 
 class BasicScan : public ScanStrategy
 {
@@ -17,5 +13,4 @@ public:
     bool scan(const CV& cv) override;
 };
 
-
-#endif //AUTOMATIC_CV_FILTERING_IN_CL_BASICSCAN_H
+#endif

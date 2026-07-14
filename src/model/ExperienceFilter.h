@@ -2,6 +2,7 @@
 #define AUTOMATIC_CV_FILTERING_IN_CL_EXPERIENCEFILTER_H
 #include "CVFilter.h"
 #include <vector>
+#include <string>  
 
 class ExperienceFilter : public CVFilter {
 public:

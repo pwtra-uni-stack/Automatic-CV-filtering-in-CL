@@ -5,11 +5,9 @@
 CVDatabase::CVDatabase() {}
 
 CVDatabase::~CVDatabase() {
-    // Giải phóng toàn bộ vùng nhớ của các CV được lưu trong Database
+    // Giải phóng toàn bộ CV
     for (CV* cv : list_cv) {
-        if (cv != nullptr) {
-            delete cv;
-        }
+        delete cv;
     }
     list_cv.clear();
 }
@@ -20,11 +18,12 @@ void CVDatabase::addCV(CV* cv) {
     }
 }
 
+// ----- Xóa CV theo ID (chỉ so sánh với định dạng "CV_X") -----
 void CVDatabase::removeCV(int id) {
-    std::string idStr = "CV_" + std::to_string(id); // Hoặc điều chỉnh quy tắc chuyển ID phù hợp
-    auto it = std::remove_if(list_cv.begin(), list_cv.end(), [&idStr](CV* cv) {
-        if (cv != nullptr && (cv->id == idStr || cv->id == std::to_string(id))) {
-            delete cv; // Giải phóng vùng nhớ trước khi xóa khỏi vector
+    std::string targetId = "CV_" + std::to_string(id);
+    auto it = std::remove_if(list_cv.begin(), list_cv.end(), [&targetId](CV* cv) {
+        if (cv != nullptr && cv->id == targetId) {
+            delete cv;
             return true;
         }
         return false;
@@ -44,12 +43,11 @@ std::vector<CV*> CVDatabase::getAll() {
     return list_cv;
 }
 
+// ----- Lấy CV theo ID (chỉ so sánh với định dạng "CV_X") -----
 CV* CVDatabase::getById(int id) {
-    std::string targetId1 = "CV_" + std::to_string(id);
-    std::string targetId2 = std::to_string(id);
-
+    std::string targetId = "CV_" + std::to_string(id);
     for (CV* cv : list_cv) {
-        if (cv != nullptr && (cv->id == targetId1 || cv->id == targetId2)) {
+        if (cv != nullptr && cv->id == targetId) {
             return cv;
         }
     }
@@ -58,18 +56,15 @@ CV* CVDatabase::getById(int id) {
 
 std::vector<CV*> CVDatabase::filter(const std::vector<CVFilter*>& filters) {
     std::vector<CV*> results;
-
     for (CV* cv : list_cv) {
         if (cv == nullptr) continue;
-
         bool passAll = true;
         for (CVFilter* filter : filters) {
             if (filter != nullptr && !filter->match(*cv)) {
                 passAll = false;
-                break; // Chỉ cần một bộ lọc không khớp thì bỏ qua CV này
+                break;
             }
         }
-
         if (passAll) {
             results.push_back(cv);
         }

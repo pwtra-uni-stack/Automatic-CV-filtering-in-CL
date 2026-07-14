@@ -7,12 +7,13 @@ bool AdvancedScan::hasRequiredSkill(const CV& cv)
 
 bool AdvancedScan::hasEnoughExperience(const CV& cv)
 {
-    return cv.experience_years >= 1;
+    return cv.experienceYears >= 1;   // Đã sửa experience_years -> experienceYears
 }
 
 bool AdvancedScan::hasEnoughScore(const CV& cv)
 {
-    return cv.skills.size() >= 60;
+    // Sửa: dùng score thay vì skills.size()
+    return cv.score >= 60;
 }
 
 bool AdvancedScan::scan(const CV& cv)
@@ -28,4 +29,3 @@ bool AdvancedScan::scan(const CV& cv)
 
     return true;
 }
-

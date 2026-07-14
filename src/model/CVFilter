@@ -1,3 +1,0 @@
-#include "CVFilter.h"
-CVFilter::~CVFilter() {
-}

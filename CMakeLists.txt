@@ -9,7 +9,8 @@ include_directories(${CMAKE_SOURCE_DIR}/src)
 
 file(GLOB_RECURSE SOURCES "src/**/*.cpp" "src/*.cpp")
 
-add_executable(CV_Auto ${SOURCES})
+add_executable(CV_Auto ${SOURCES}
+        src/model/CVFilter.cpp)
 
 include_directories(src)
 

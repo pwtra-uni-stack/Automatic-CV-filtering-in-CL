@@ -4,16 +4,21 @@
 SkillFilter::SkillFilter(std::vector<std::string> sk) {
     required_skills = sk;
 }
+
 bool SkillFilter::match(CV cv) {
-    for (size_t i = 0; i < required_skills.size(); i++) {
-        bool timThay = false;
-        for (size_t j = 0; j < cv.skills.size(); j++) {
-            if (cv.skills[j] == required_skills[i]) {
-                timThay = true;
+    // Với mỗi từ khóa yêu cầu
+    for (const std::string& keyword : required_skills) {
+        bool found = false;
+        // Duyệt qua tất cả kỹ năng của CV
+        for (const std::string& skill : cv.skills) {
+            // Tìm kiếm chuỗi con (không phân biệt hoa/thường nếu cần)
+            if (skill.find(keyword) != std::string::npos) {
+                found = true;
                 break;
             }
         }
-        if (!timThay) return false;
+        // Nếu thiếu bất kỳ từ khóa nào -> không khớp
+        if (!found) return false;
     }
     return true;
 }

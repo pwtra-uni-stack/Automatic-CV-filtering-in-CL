@@ -1,7 +1,8 @@
 #include "PdfParser.h"
-#include <fstream>
-#include <sstream>
-#include <cstdlib>
+#include <cstdlib>    // cho std::system
+#include <fstream>    // cho std::ifstream
+#include <sstream>    // cho std::stringstream
+#include <string>
 
 std::string PdfParser::parse(std::string duong_dan_file) {
     std::string file_tam = duong_dan_file + ".txt";

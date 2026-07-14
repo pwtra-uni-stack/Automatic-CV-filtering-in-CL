@@ -1,4 +1,3 @@
-
 #include "CVController.h"
 #include "model/FileManager.h"
 #include "model/SkillFilter.h"
@@ -12,12 +11,14 @@
 #include <vector>
 #include <memory>
 #include <string>
+
 CVController::CVController() {
     LOG_INFO("CVController initialized");
     // Khởi tạo dữ liệu mẫu (sau này có thể load từ file)
     // Tạm thời để database rỗng, người dùng sẽ load từ menu
 }
 
+// -------------------- HÀM RUN CHÍNH (đã bổ sung case 9) --------------------
 void CVController::run() {
     int choice;
     do {
@@ -34,6 +35,7 @@ void CVController::run() {
                 case 8:
                     OutputView::showMessage("Goodbye!");
                     break;
+                case 9: handlePreview(); break;   // Đã thêm case 9
                 default:
                     OutputView::showError("Invalid choice!");
             }
@@ -52,7 +54,6 @@ void CVController::handleLoad() {
     OutputView::showMessage("Loading CVs from Data/cvs/");
 
     try {
-        // Lấy danh sách file trong thư mục
         auto files = FileManager::getCVFiles("Data/cvs/");
         if (files.empty()) {
             OutputView::showError("No files found in Data/cvs/");
@@ -107,7 +108,7 @@ void CVController::handleViewDetail() {
     }
 }
 
-// -------------------- HANDLER FILTER --------------------
+// -------------------- HANDLER FILTER (đã sửa SkillFilter) --------------------
 void CVController::handleFilter() {
     auto all = database.getAll();
     if (all.empty()) {
@@ -121,7 +122,8 @@ void CVController::handleFilter() {
 
     std::vector<CVFilter*> filters;
     if (!keyword.empty()) {
-        filters.push_back(new SkillFilter(keyword));
+        // SỬA: truyền vector<string> thay vì string
+        filters.push_back(new SkillFilter({keyword}));
     }
     if (minExp > 0) {
         filters.push_back(new ExperienceFilter(minExp));
@@ -239,42 +241,7 @@ void CVController::handleSave() {
     }
 }
 
-// src/controller/CVController.cpp (phần run)
-void CVController::run() {
-    int choice;
-    do {
-        try {
-            choice = menu.showMainMenu();
-            switch (choice) {
-            case 1: handleLoad(); break;
-            case 2: handleViewAll(); break;
-            case 3: handleViewDetail(); break;
-            case 4: handleFilter(); break;
-            case 5: handleScan(); break;
-            case 6: handleDelete(); break;
-            case 7: handleSave(); break;
-            case 8: OutputView::showMessage("Goodbye!"); break;
-            case 9: handlePreview(); break; // Mới
-            default: OutputView::showError("Invalid choice!");
-            }
-        } catch (...) { /* ... */ }
-    } while (choice != 8);
-}
-
-void CVController::handlePreview() {
-    std::string filePath = InputView::getStringInput("Nhập đường dẫn file (VD: Data/cvs/sample.txt): ");
-    try {
-        std::string content = FileManager::extractTextFromFile(filePath);
-        if (content.empty()) {
-            OutputView::showError("Không thể đọc file hoặc định dạng không hỗ trợ.");
-            return;
-        }
-        OutputView::showRawContent(content, filePath);
-    } catch (const std::exception& e) {
-        OutputView::showError("Lỗi: " + std::string(e.what()));
-    }
-}
-
+// -------------------- HANDLER PREVIEW (duy nhất) --------------------
 void CVController::handlePreview() {
     std::string filePath = InputView::getStringInput("Enter file path (e.g., Data/cvs/sample.txt): ");
     if (filePath.empty()) {
