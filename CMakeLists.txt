@@ -7,7 +7,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include_directories(${CMAKE_SOURCE_DIR}/src)
 
-file(GLOB_RECURSE SOURCES "src/*.cpp")
+file(GLOB_RECURSE SOURCES "src/**/*.cpp" "src/*.cpp")
 
 add_executable(CV_Auto ${SOURCES})
 
