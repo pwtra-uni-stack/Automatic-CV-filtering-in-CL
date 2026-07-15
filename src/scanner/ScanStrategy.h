@@ -7,7 +7,7 @@
 
 #include "model/CV.h"
 
-class ScanStrateg {
+class ScanStrategy {
 public:
     virtual bool scan(const CV& cv) = 0;
     virtual ~ScanStrategy() = default;
