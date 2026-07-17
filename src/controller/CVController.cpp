@@ -295,7 +295,7 @@ void handleAICVProcessing(CV* cv) {
 
         // 5. Cập nhật trực tiếp vào đối tượng CV của bạn[cite: 14]
         cv->score = aiData["score"].get<int>();[cite: 14];
-        cv->skills = aiData["skills"].get<std::vector<std::string>>();[cite: 14];
+        cv->skills = aiData["skills"].get<std::vector<std::string>>();[cite : 14];
 
         LOG_INFO("CV #" + cv->id + " successfully processed by Gemini AI.");[cite: 1, 36];
     } catch (const std::exception& e) {
