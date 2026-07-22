@@ -56,3 +56,10 @@ target_link_libraries(CV_Auto PRIVATE
 
 # ===== Thêm nlohmann/json (header-only) =====
 include_directories(third_party/json)
+# Thêm file OllamaClient.cpp vào danh sách source
+add_executable(Automatic-CV-filtering-in-CL
+        src/main.cpp
+        src/ai/GeminiClient.cpp
+        src/ai/OllamaClient.cpp   # <--- Thêm dòng này
+        # ... các file .cpp khác trong project
+)

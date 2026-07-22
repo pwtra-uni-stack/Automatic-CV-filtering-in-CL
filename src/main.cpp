@@ -37,4 +37,5 @@ int main(int argc, char* argv[]) {
     // 5. Đóng file log an toàn
     Logger::getInstance().close();
     return 0;
+
 }
