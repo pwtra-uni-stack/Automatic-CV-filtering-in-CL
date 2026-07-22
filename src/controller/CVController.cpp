@@ -302,3 +302,62 @@ void handleAICVProcessing(CV* cv) {
         LOG_ERROR("Failed to parse Gemini AI response: " + std::string(e.what()));[cite: 36];
     }
 }
+// -------------------- HANDLER AI EVALUATION (Tích hợp Gemini & Ollama) --------------------
+#include "ai/AIFactory.h"
+
+void CVController::handleAIEvaluation() {
+    auto all = database.getAll();
+    if (all.empty()) {
+        OutputView::showError("No CVs available. Load data first.");
+        return;
+    }
+
+    // 1. Chọn CV cần đánh giá thông qua ID
+    int id = InputView::getIntInput("Enter CV ID to evaluate with AI: ");
+    CV* cv = database.getById(id);
+    if (!cv) {
+        OutputView::showError("CV with ID " + std::to_string(id) + " not found.");
+        return;
+    }
+
+    // 2. Cho phép người dùng lựa chọn nhà cung cấp AI
+    OutputView::showMessage("\n=== SELECT AI PROVIDER ===");
+    OutputView::showMessage("1. Google Gemini (Cloud AI)");
+    OutputView::showMessage("2. Ollama (Local AI - Qwen/Llama)");
+    int choice = InputView::getIntInput("Your choice (1 or 2): ");
+
+    // 3. Khởi tạo client thông qua AIFactory (Áp dụng Polymorphism / Strategy Pattern)
+    std::unique_ptr<IAIClient> aiClient;
+    if (choice == 1) {
+        aiClient = AIFactory::createClient(AIFactory::GEMINI);
+        LOG_INFO("Selected Gemini AI client for evaluation.");
+    } else {
+        aiClient = AIFactory::createClient(AIFactory::OLLAMA);
+        LOG_INFO("Selected Ollama AI client for evaluation.");
+    }
+
+    // 4. Nhập Yêu cầu công việc (Job Description) từ người dùng
+    std::string jobDesc = InputView::getStringInput("Enter Job Description (JD): ");
+    if (jobDesc.empty()) {
+        OutputView::showError("Job Description cannot be empty.");
+        return;
+    }
+
+    OutputView::showMessage("\n[Processing] AI is evaluating the CV, please wait...");
+    LOG_INFO("Sending CV #" + std::to_string(id) + " content to AI provider.");
+
+    try {
+        // 5. Gọi hàm đa hình danhGiaCV đã được đồng bộ chuẩn giao diện IAIClient
+        std::string evaluationResult = aiClient->danhGiaCV(cv->raw_text, jobDesc);
+
+        // 6. Hiển thị kết quả ra màn hình giao diện View
+        OutputView::showMessage("\n================ AI EVALUATION RESULT ================");
+        std::cout << evaluationResult << "\n";
+        OutputView::showMessage("======================================================");
+
+        LOG_INFO("AI evaluation completed successfully for CV #" + std::to_string(id));
+    } catch (const std::exception& e) {
+        OutputView::showError("AI Evaluation error: " + std::string(e.what()));
+        LOG_ERROR("AI evaluation failed: " + std::string(e.what()));
+    }
+}

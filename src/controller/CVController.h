@@ -8,7 +8,7 @@
 #include "view/OutputView.h"
 #include "scanner/ScanEngine.h"
 
-class CVController:public CVView {
+class CVController: public CVView {
 private:
     CVDatabase database;
     MenuView menu;
@@ -25,6 +25,9 @@ public:
     void handleDelete();
     void handleSave();
     void handlePreview();
+
+    // Thêm hàm xử lý đánh giá AI đa hình (Gemini / Ollama)
+    void handleAIEvaluation();
 };
 
 #endif // CVCONTROLLER_H

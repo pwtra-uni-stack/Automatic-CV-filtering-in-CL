@@ -6,6 +6,9 @@
 #include "utils/Logger.h"
 #include <iostream>
 
+class CV;
+class CVDatabase;
+
 int CVService::loadCVsFromDirectory(const std::string& dir, CVDatabase& db) {
     LOG_INFO("Loading CVs from: " + dir);
     auto files = FileManager::getCVFiles(dir);

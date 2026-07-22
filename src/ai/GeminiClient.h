@@ -3,17 +3,17 @@
 
 #include <string>
 
-class GeminiClient {
+#include "IAIClient.h"
+
+class GeminiClient : public IAIClient {
 private:
     std::string apiKey;
-    // Hàm hỗ trợ libcurl ghi dữ liệu nhận được từ API vào chuỗi string
-    static size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp);
+    std::string modelName;
+    static size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* s);
 
 public:
-    GeminiClient(const std::string& key);
-    // Hàm gửi nội dung CV và Prompt tới Gemini, trả về phản hồi dạng văn bản
-    std::string phânTíchCV(const std::string& rawText, const std::string& prompt);
-};
+    GeminiClient();
+    std::str
 
 
 #endif //CV_AUTO_GEMINICLIENT_H
