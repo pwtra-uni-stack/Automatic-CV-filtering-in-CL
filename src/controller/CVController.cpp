@@ -361,3 +361,55 @@ void CVController::handleAIEvaluation() {
         LOG_ERROR("AI evaluation failed: " + std::string(e.what()));
     }
 }
+void CVController::showMenu() {
+    int choice = 0;
+    do {
+        std::cout << "\n==============================\n";
+        std::cout << "      AUTO CV FILTERING       \n";
+        std::cout << "==============================\n";
+        std::cout << "1. Scan a new CV file\n";
+        std::cout << "0. Exit application\n";
+        std::cout << "Your choice: ";
+
+        if (!(std::cin >> choice)) {
+            std::cout << "Invalid choice. Please try again!\n";
+            std::cin.clear();
+            std::cin.ignore(10000, '\n');
+            continue;
+        }
+
+        switch (choice) {
+            case 1:
+                onScanCVMenuSelected();
+                break;
+            case 0:
+                std::cout << "Exiting application...\n";
+                break;
+            default:
+                std::cout << "Feature does not exist. Please try again!\n";
+        }
+    } while (choice != 0);
+}
+
+void CVController::onScanCVMenuSelected() {
+    std::string filePath;
+    std::cout << "Enter the path of the CV file to scan (.pdf / .docx): ";
+    std::cin >> filePath;
+
+    // Check if the AI Client has been initialized within the Controller
+    if (!aiClientInstance) {
+        std::cout << "Error: AI Client is not initialized in the Controller!\n";
+        return;
+    }
+
+    ScanResult result;
+    // Call the Service layer to execute the complete end-to-end processing pipeline
+    bool success = CVService::processAndScanCV(filePath, *aiClientInstance, result);
+
+    if (success) {
+        std::cout << "\nCV successfully scanned!\n";
+        // TODO: Print detailed results from the 'result' object to the console
+    } else {
+        std::cout << "\nCV scanning failed, please check the system logs.\n";
+    }
+}
