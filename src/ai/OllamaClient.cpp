@@ -14,7 +14,7 @@ OllamaClient::OllamaClient(std::string modelName) {
 size_t OllamaClient::WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
     ((std::string*)userp)->append((char*)contents, size * nmemb);
     return size * nmemb;
-}
+}//hi
 
 std::string OllamaClient::guiCauHoi(std::string prompt) {
     CURL* curl = curl_easy_init();
