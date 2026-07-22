@@ -2,7 +2,6 @@
 #define CV_AUTO_GEMINICLIENT_H
 
 #include <string>
-
 #include "IAIClient.h"
 
 class GeminiClient : public IAIClient {
@@ -13,7 +12,7 @@ private:
 
 public:
     GeminiClient();
-    std::str
 
+};
 
 #endif //CV_AUTO_GEMINICLIENT_H
