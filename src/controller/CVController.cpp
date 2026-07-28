@@ -5,7 +5,9 @@
 #include "model/EducationFilter.h"
 #include "scanner/BasicScan.h"
 #include "scanner/AdvancedScan.h"
-#include "exception/Exception.h"
+#include "exception/FileException.h"
+#include "exception/InvalidInputException.h"
+#include "exception/DuplicateCVException.h"
 #include "utils/Logger.h"
 #include <iostream>
 #include <vector>
@@ -14,7 +16,7 @@
 #include "ai/GeminiClient.h"
 #include "utils/EnvLoader.h"
 #include <nlohmann/json.hpp>
-
+#include "ai/AIFactory.h"
 
 CVController::CVController() {
     LOG_INFO("CVController initialized");
@@ -267,10 +269,13 @@ void CVController::handlePreview() {
     }
 }
 
-void handleAICVProcessing(CV* cv) {
+void CVController::handleAIEvaluation(CV* cv) {
     // 1. Đọc API Key
-    std::string apiKey = EnvLoader::getEnv("GEMINI_API_KEY");[cite: 45];
-    GeminiClient client(apiKey);
+    std::string apiKey = EnvLoader::getEnv("GEMINI_API_KEY");
+
+    // Khởi tạo client (Sử dụng GeminiClient hoặc AIFactory)
+    // Nếu dùng con trỏ dynamic:
+    auto client = AIFactory::createClient(AIFactory::GEMINI);
 
     // 2. Viết định hướng Prompt ép AI trả về đúng cấu trúc JSON mong muốn
     std::string prompt = "Bạn là một chuyên gia tuyển dụng phần mềm. Hãy phân tích CV sau và trả về "
@@ -281,7 +286,7 @@ void handleAICVProcessing(CV* cv) {
                          "}";
 
     // 3. Gọi API Gemini
-    std::string rawJsonResponse = client.phânTíchCV(cv->raw_text, prompt);
+    std::string rawJsonResponse = client->danhGiaCV(cv->raw_text, prompt);
 
     try {
         // 4. Bóc tách JSON kết quả trả về bằng nlohmann/json
@@ -293,17 +298,16 @@ void handleAICVProcessing(CV* cv) {
         // Khử nhiễu nếu AI vô tình bọc thẻ ```json ... ```
         auto aiData = nlohmann::json::parse(aiTextResponse);
 
-        // 5. Cập nhật trực tiếp vào đối tượng CV của bạn[cite: 14]
-        cv->score = aiData["score"].get<int>();[cite: 14];
-        cv->skills = aiData["skills"].get<std::vector<std::string>>();[cite : 14];
+        // 5. Cập nhật trực tiếp vào đối tượng CV của bạn
+        cv->score = aiData["score"].get<int>();
+        cv->skills = aiData["skills"].get<std::vector<std::string>>();
 
-        LOG_INFO("CV #" + cv->id + " successfully processed by Gemini AI.");[cite: 1, 36];
+        LOG_INFO("CV #" + cv->id + " successfully processed by Gemini AI.");
     } catch (const std::exception& e) {
-        LOG_ERROR("Failed to parse Gemini AI response: " + std::string(e.what()));[cite: 36];
+        LOG_ERROR("Failed to parse Gemini AI response: " + std::string(e.what()));
     }
 }
 // -------------------- HANDLER AI EVALUATION (Tích hợp Gemini & Ollama) --------------------
-#include "ai/AIFactory.h"
 
 void CVController::handleAIEvaluation() {
     auto all = database.getAll();
