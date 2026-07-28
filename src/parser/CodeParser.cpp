@@ -7,7 +7,7 @@
 
 namespace fs = std::filesystem;
 
-std::string CodeParser::quétThưMụcCode(std::string duong_dan_thu_muc) {
+std::string CodeParser::quet_thu_muc_code(std::string duong_dan_thu_muc) {
     if (!fs::exists(duong_dan_thu_muc) || !fs::is_directory(duong_dan_thu_muc)) {
         return "[Lỗi] Thư mục mã nguồn không tồn tại!";
     }
