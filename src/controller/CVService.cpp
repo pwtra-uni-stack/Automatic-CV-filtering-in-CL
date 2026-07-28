@@ -5,25 +5,17 @@
 #include "scanner/ScanEngine.h"
 #include "utils/Logger.h"
 // Include các parser thực tế có trong dự án của bạn
-#include "PdfParser.h"
-#include "DocxParser.h"
+#include "parser/PdfParser.h"
+#include "parser/DocxParser.h"
 
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <algorithm>
 #include <cctype>
-#include <curl/curl.h>
 #include <nlohmann/json.hpp>
 
 using json = nlohmann::json;
-
-// Hàm callback cho libcurl
-static size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* userp) {
-    size_t totalSize = size * nmemb;
-    userp->append((char*)contents, totalSize);
-    return totalSize;
-}
 
 // Hàm trích xuất text thực tế sử dụng PdfParser và DocxParser từ dự án
 std::string extractTextFromDocument(const std::string& filePath) {
@@ -42,14 +34,12 @@ std::string extractTextFromDocument(const std::string& filePath) {
         }
     }
     else if (ext == "pdf") {
-        // Sử dụng PdfParser thực tế của dự án
         PdfParser pdfParser;
-        rawText = pdfParser.extractText(filePath); // Thay đổi tên hàm cho khớp với header PdfParser của bạn nếu cần
+        rawText = pdfParser.parse(filePath);
     }
     else if (ext == "docx") {
-        // Sử dụng DocxParser thực tế của dự án
         DocxParser docxParser;
-        rawText = docxParser.extractText(filePath); // Thay đổi tên hàm cho khớp với header DocxParser của bạn nếu cần
+        rawText = docxParser.parse(filePath);
     }
 
     return rawText;
@@ -118,72 +108,29 @@ std::string CVService::sanitizeText(const std::string& rawText) {
     return cleaned;
 }
 
-// Bước 3: Gọi AI qua libcurl
+// Bước 3: Gọi AI API với cơ chế thử lại (Retry)
 std::string CVService::callAIWithRetry(IAIClient& aiClient, const std::string& prompt, int maxRetries) {
     int attempts = 0;
     std::string responseString = "";
-    bool success = false;
 
-    std::string apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=YOUR_API_KEY";
-
-    while (attempts < maxRetries && !success) {
+    while (attempts < maxRetries) {
         attempts++;
-        LOG_INFO("Attempt " + std::to_string(attempts) + " calling AI API via libcurl...");
+        LOG_INFO("Attempt " + std::to_string(attempts) + " calling AI API...");
 
-        CURL* curl = curl_easy_init();
-        if (!curl) {
-            LOG_ERROR("Failed to initialize libcurl.");
-            break;
-        }
+        // Gọi AI thông qua aiClient (đã bọc logic kết nối bên trong GeminiClient)
+        responseString = aiClient.danhGiaCV("", prompt);
 
-        responseString.clear();
-
-        json payload = {
-            {"contents", {
-                {{"parts", { {{"text", prompt}} }}}
-            }}
-        };
-        std::string payloadStr = payload.dump();
-
-        struct curl_slist* headers = nullptr;
-        headers = curl_slist_append(headers, "Content-Type: application/json");
-
-        curl_easy_setopt(curl, CURLOPT_URL, apiUrl.c_str());
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, payloadStr.c_str());
-        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &responseString);
-        curl_easy_setopt(curl, CURLOPT_TIMEOUT, 30L);
-
-        CURLcode res = curl_easy_perform();
-
-        curl_easy_cleanup(curl);
-        curl_slist_free_all(headers);
-
-        if (res == CURLE_OK) {
-            success = true;
+        // Nếu nhận được phản hồi thành công (không rỗng), trả về kết quả ngay
+        if (!responseString.empty()) {
             LOG_INFO("AI request succeeded on attempt " + std::to_string(attempts));
-        } else {
-            LOG_WARNING("AI request failed (libcurl error: " + std::string(curl_easy_strerror(res)) + "). Retrying...");
+            return responseString;
         }
+
+        LOG_INFO("AI request failed on attempt " + std::to_string(attempts) + ". Retrying...");
     }
 
-    if (!success) {
-        LOG_ERROR("AI request failed after " + std::to_string(maxRetries) + " attempts.");
-        return "[ERROR]: Failed to get response from AI after multiple retries.";
-    }
-
-    try {
-        json resJson = json::parse(responseString);
-        if (resJson.contains("candidates") && !resJson["candidates"].empty()) {
-            return resJson["candidates"][0]["content"]["parts"][0]["text"].get<std::string>();
-        } else {
-            return "[ERROR]: Invalid JSON response format from AI.";
-        }
-    } catch (const json::parse_error& e) {
-        LOG_ERROR("JSON Parsing Error: " + std::string(e.what()));
-        return "[ERROR]: Failed to parse AI response.";
-    }
+    LOG_ERROR("AI request failed after " + std::to_string(maxRetries) + " attempts.");
+    return "[ERROR]: Failed to get response from AI after multiple retries.";
 }
 
 // Bước 4: Xuất kết quả
@@ -226,7 +173,7 @@ bool CVService::processAndScanCV(const std::string& filePath, IAIClient& aiClien
     std::string rawText = extractTextFromDocument(filePath);
     std::string cleanText = sanitizeText(rawText);
 
-    // 3. Gửi sang AI phân tích qua libcurl
+    // 3. Gửi sang AI phân tích
     std::string aiResponse = callAIWithRetry(aiClient, cleanText, 2);
 
     // 4. Map kết quả JSON từ AI vào đối tượng CV để ScanEngine chấm điểm
@@ -271,4 +218,3 @@ bool CVService::processAndScanCV(const std::string& filePath, IAIClient& aiClien
 
     LOG_INFO("CV successfully processed, parsed, analyzed by AI and evaluated via ScanEngine.");
     return true;
-}
