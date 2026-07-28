@@ -7,12 +7,19 @@
 #include "view/InputView.h"
 #include "view/OutputView.h"
 #include "scanner/ScanEngine.h"
+#include "controller/CVService.h"
+#include "ai/IAIClient.h"
+#include <memory>
 
-class CVController: public CVView {
+class CVController {
 private:
     CVDatabase database;
     MenuView menu;
     ScanEngine scanEngine;
+
+    // Khai báo thêm Service và AI Client
+    CVService cvService;
+    std::shared_ptr<IAIClient> aiClientInstance;
 
 public:
     CVController();
@@ -27,6 +34,7 @@ public:
     void handlePreview();
 
     // Thêm hàm xử lý đánh giá AI đa hình (Gemini / Ollama)
+    void handleAIEvaluation(CV* cv);
     void handleAIEvaluation();
     // Constructor nhận vào AI Client (Áp dụng Dependency Injection)
     explicit CVController(IAIClient* client);
