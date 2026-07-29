@@ -10,6 +10,10 @@ std::string PdfParser::parse(std::string duong_dan_file) {
     std::string lenh = "pdftotext \"" + duong_dan_file + "\" \"" + file_tam + "\"";
     int trang_thai = std::system(lenh.c_str());
 
+    if (trang_thai != 0) {
+        return "[Lỗi] Lệnh pdftotext thất bại. Hãy kiểm tra pdftotext đã được cài đặt chưa.";
+    }
+
     std::ifstream file(file_tam);
     if (!file.is_open()) {
         return "[Lỗi] Không thể trích xuất văn bản từ file PDF: " + duong_dan_file;

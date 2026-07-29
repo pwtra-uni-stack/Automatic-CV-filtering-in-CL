@@ -30,6 +30,7 @@ set(SOURCES
 
         # Parsers & Scanners
         src/parser/PdfParser.cpp
+        src/parser/DocxParser.cpp
         src/parser/CodeParser.cpp
         src/scanner/BasicScan.cpp
         src/scanner/BasicScan.h
