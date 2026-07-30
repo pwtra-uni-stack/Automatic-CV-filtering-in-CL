@@ -154,8 +154,10 @@ bool CVService::exportScanResult(const std::string& outputPath, const ScanResult
 // Phương thức scanCVs kết nối ScanEngine với BasicScan và AdvancedScan
 ScanResult CVService::scanCVs(const std::vector<CV*>& list) {
     ScanEngine engine;
-    engine.addStrategy(new BasicScan());
-    engine.addStrategy(new AdvancedScan());
+    BasicScan basic;
+    AdvancedScan advanced;
+    engine.addStrategy(&basic);
+    engine.addStrategy(&advanced);
     return engine.scanAll(list);
 }
 
@@ -218,3 +220,4 @@ bool CVService::processAndScanCV(const std::string& filePath, IAIClient& aiClien
 
     LOG_INFO("CV successfully processed, parsed, analyzed by AI and evaluated via ScanEngine.");
     return true;
+}

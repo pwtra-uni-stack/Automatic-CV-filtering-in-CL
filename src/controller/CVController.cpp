@@ -20,8 +20,11 @@
 
 CVController::CVController() {
     LOG_INFO("CVController initialized");
-    // Khởi tạo dữ liệu mẫu (sau này có thể load từ file)
-    // Tạm thời để database rỗng, người dùng sẽ load từ menu
+}
+
+CVController::CVController(IAIClient* client) {
+    aiClientInstance = std::shared_ptr<IAIClient>(client);
+    LOG_INFO("CVController initialized with external AI client");
 }
 
 // -------------------- HÀM RUN CHÍNH (đã bổ sung case 9) --------------------

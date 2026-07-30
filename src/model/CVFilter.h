@@ -6,7 +6,7 @@
 
 class CVFilter {
 public:
-    virtual bool match(CV cv) = 0;
+    virtual bool match(const CV& cv) = 0;
     virtual ~CVFilter() = default;
 };
 

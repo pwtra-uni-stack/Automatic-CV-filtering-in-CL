@@ -1,5 +1,5 @@
 #include "DocxParser.h"
-#include "../../src/exception/FileException.h"
+#include "../exception/FileException.h"
 #include <cstdlib>
 #include <fstream>
 #include <sstream>

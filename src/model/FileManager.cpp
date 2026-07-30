@@ -1,14 +1,13 @@
 #include "FileManager.h"
+#include "../parser/PdfParser.h"
+#include "../parser/DocxParser.h"
+#include "../exception/FileException.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <filesystem>
 
 namespace fs = std::filesystem;
-
-// Các parser giả lập (giữ nguyên để minh hoạ)
-class DocxParser { public: std::string extractText(std::string p) { return "[Nội dung Docx thực tế]"; } };
-class PdfParser  { public: std::string extractText(std::string p) { return "[Nội dung Pdf thực tế]"; } };
 
 // ----- Hàm trích xuất giá trị theo cặp từ khoá -----
 std::string FileManager::layGiaTri(std::string text, std::string tuKhoaBatDau, std::string tuKhoaKetThuc) {
@@ -91,11 +90,11 @@ std::string FileManager::extractTextFromFile(const std::string& filePath) {
     }
     else if (ext == ".docx") {
         DocxParser parser;
-        return parser.extractText(filePath);
+        return parser.parse(filePath);
     }
     else if (ext == ".pdf") {
         PdfParser parser;
-        return parser.extractText(filePath);
+        return parser.parse(filePath);
     }
     return "";
 }

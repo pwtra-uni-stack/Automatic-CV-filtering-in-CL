@@ -5,7 +5,7 @@ SkillFilter::SkillFilter(std::vector<std::string> sk) {
     required_skills = sk;
 }
 
-bool SkillFilter::match(CV cv) {
+bool SkillFilter::match(const CV& cv) {
     // Với mỗi từ khóa yêu cầu
     for (const std::string& keyword : required_skills) {
         bool found = false;

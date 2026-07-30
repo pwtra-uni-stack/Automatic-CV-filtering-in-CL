@@ -8,6 +8,6 @@ class ExperienceFilter : public CVFilter {
 public:
     int min_years;
     ExperienceFilter(int years);
-    bool match(CV cv) override;
+    bool match(const CV& cv) override;
 };
 #endif //AUTOMATIC_CV_FILTERING_IN_CL_EXPERIENCEFILTER_H
