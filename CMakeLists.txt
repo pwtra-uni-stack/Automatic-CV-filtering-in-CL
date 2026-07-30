@@ -67,34 +67,3 @@ set(SOURCES
 )
 
 add_executable(CV_Auto ${SOURCES})
-
-# ===== Tìm thư viện curl =====
-if(NOT CURL_ROOT)
-    set(CURL_ROOT "D:/CMCU/curl-8.21.0_3-win64-mingw/curl-8.21.0_3-win64-mingw")
-endif()
-
-include_directories(${CURL_ROOT}/include)
-link_directories(${CURL_ROOT}/lib)
-
-# ===== Link thư viện libcurl và hệ thống =====
-target_link_libraries(CV_Auto PRIVATE
-        ${CURL_ROOT}/lib/libcurl.dll.a
-        ${CURL_ROOT}/lib/libssl.a
-        ${CURL_ROOT}/lib/libcrypto.a
-        ${CURL_ROOT}/lib/libz.a
-        ${CURL_ROOT}/lib/libzstd.a
-        ${CURL_ROOT}/lib/libbrotlidec.a
-        ${CURL_ROOT}/lib/libbrotlicommon.a
-        ${CURL_ROOT}/lib/libnghttp2.a
-        ${CURL_ROOT}/lib/libngtcp2.a
-        ${CURL_ROOT}/lib/libngtcp2_crypto_libressl.a
-        ${CURL_ROOT}/lib/libpsl.a
-        ${CURL_ROOT}/lib/libssh2.a
-        ws2_32
-        wldap32
-        crypt32
-        bcrypt
-        iphlpapi
-        ole32
-        uuid
-)
