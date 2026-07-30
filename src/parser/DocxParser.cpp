@@ -1,4 +1,5 @@
 #include "DocxParser.h"
+#include "../../src/exception/FileException.h"
 #include <cstdlib>
 #include <fstream>
 #include <sstream>
@@ -10,11 +11,15 @@ std::string DocxParser::parse(std::string duong_dan_file) {
     std::string file_tam = duong_dan_file + ".txt";
 
     std::string lenh = "docx2txt \"" + duong_dan_file + "\" \"" + file_tam + "\"";
-    std::system(lenh.c_str());
+    int trang_thai = std::system(lenh.c_str());
+
+    if (trang_thai != 0) {
+        throw FileException("Lệnh docx2txt thất bại. Hãy kiểm tra docx2txt đã được cài đặt chưa: " + duong_dan_file);
+    }
 
     std::ifstream file(file_tam);
     if (!file.is_open()) {
-        return "[Lỗi] Không thể trích xuất văn bản từ file DOCX: " + duong_dan_file;
+        throw FileException("Không thể mở file sau khi parse DOCX: " + duong_dan_file);
     }
 
     std::stringstream buffer;

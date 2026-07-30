@@ -1,4 +1,5 @@
 #include "PdfParser.h"
+#include "../exception/FileException.h"
 #include <cstdlib>    // cho std::system
 #include <fstream>    // cho std::ifstream
 #include <sstream>    // cho std::stringstream
@@ -11,12 +12,12 @@ std::string PdfParser::parse(std::string duong_dan_file) {
     int trang_thai = std::system(lenh.c_str());
 
     if (trang_thai != 0) {
-        return "[Lỗi] Lệnh pdftotext thất bại. Hãy kiểm tra pdftotext đã được cài đặt chưa.";
+        throw FileException("Lệnh pdftotext thất bại. Hãy kiểm tra pdftotext đã được cài đặt chưa: " + duong_dan_file);
     }
 
     std::ifstream file(file_tam);
     if (!file.is_open()) {
-        return "[Lỗi] Không thể trích xuất văn bản từ file PDF: " + duong_dan_file;
+        throw FileException("Không thể mở file sau khi parse PDF: " + duong_dan_file);
     }
 
     std::stringstream buffer;
