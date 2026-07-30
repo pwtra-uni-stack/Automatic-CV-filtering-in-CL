@@ -16,9 +16,6 @@ private:
     CVDatabase database;
     MenuView menu;
     ScanEngine scanEngine;
-
-    // Khai báo thêm Service và AI Client
-    CVService cvService;
     std::shared_ptr<IAIClient> aiClientInstance;
 
 public:

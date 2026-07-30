@@ -167,6 +167,9 @@ void CVController::handleScan() {
     OutputView::showMessage("Scanning and classifying CVs...");
     LOG_INFO("Starting scan of " + std::to_string(all.size()) + " CVs");
 
+    // Clear strategies trước để tránh chồng chất khi gọi nhiều lần
+    scanEngine.clearStrategies();
+
     BasicScan basic;
     AdvancedScan advanced;
     scanEngine.addStrategy(&basic);
